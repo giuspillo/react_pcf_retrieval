@@ -36,7 +36,7 @@ Reply ONLY with a JSON object containing these exact fields:
 Do not include any markdown formatting or additional JSON wrappers.
 ```
 
-## Project Structure
+## Project Structure
 
 ```txt
 .
@@ -122,7 +122,7 @@ Do not include any markdown formatting or additional JSON wrappers.
 
 ## Compatibility Notes
 
-This document tracks direct code modifications applied to external libraries to ensure compatibility between dependencies, frameworks, and runtime versions.
+This section tracks direct code modifications applied to external libraries to ensure compatibility between dependencies, frameworks, and runtime versions.
 
 > **IMPORTANT**: These changes are not part of the original upstream projects and are applied locally.
 
