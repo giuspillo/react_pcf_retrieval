@@ -39,6 +39,85 @@ Do not include any markdown formatting or additional JSON wrappers.
 ## Project Structure
 
 ```txt
+.
+├── config                                   <- Project configuration
+│   ├── dataset.yaml
+│   ├── emissions_enrichment.yaml
+│   ├── evaluation.yaml
+│   ├── inference.yaml
+│   ├── param_space.yaml
+│   ├── preprocessing.yaml
+│   ├── ray_tune.yaml
+│   └── recbole.yaml
+├── ecoamazon                                <- Eco-Amazon resource
+│   ├── data                                 <- Amazon Reviews'23 item metadata enriched with PCFs
+│   │   └── gemini_2_5_flash                 <- Estimates by Gemini 2.5 Flash as the agent's reasoning engine
+│   │       └── electronics.jsonl
+│   └── src                                  <- Source code to enrich data with PCFs
+│       ├── agent                            <- Agent to retrieve and estimate PCFs
+│       │   ├── const.py                     <- Global constants of the agent
+│       │   ├── context.py                   <- Runtime configuration for the agent
+│       │   ├── graph.py                     <- Agent graph structure and execution logic
+│       │   ├── prompts.py                   <- Prompts for the LLM used as the agent's reasoning engine
+│       │   ├── state.py                     <- Execution state of the agent
+│       │   └── tools.py                     <- Available tools for the agent
+│       └── enrich_with_emissions.py         <- Script to run the agent and enrich data with PCFs
+├── ground_truths                            <- Ground truths with known PCFs and estimates (zero-shot vs. agent)
+│   ├── gemini_2_5_flash                     <- Estimates by Gemini 2.5 Flash
+│   │   ├── clothing.jsonl
+│   │   ├── electronics.jsonl
+│   │   └── home_and_kitchen.jsonl
+│   └── openai_o3_mini                       <- Estimates by OpenAI o3-mini
+│       ├── clothing.jsonl
+│       ├── electronics.jsonl
+│       └── home_and_kitchen.jsonl
+├── Makefile                                 <- Make commands
+├── pyproject.toml                           <- Project settings
+├── README.md                                <- Project documentation
+├── .env.example                             <- Example of .env file
+├── .gitattributes                           <- Git path-specific attributes
+├── .gitignore                               <- Files ignored by Git
+├── recsys_results                           <- Evalution results from the recommendation pipeline
+│   └── gemini_2_5_flash                     <- Evalution results on Gemini 2.5 Flash PCF estimates
+│       └── electronics.tsv
+└── use_case                                 <- Use case: Sustainability-aware recommendation pipeline
+    ├── data                                 <- Amazon Reviews'23 data (raw and processed user reviews + item and user maps)
+    │   └── electronics
+    │       ├── electronics.inter
+    │       ├── electronics.jsonl
+    │       ├── electronics.test.inter
+    │       ├── electronics.train.inter
+    │       ├── electronics.valid.inter
+    │       └── maps
+    │           ├── item_map.tsv
+    │           └── user_map.tsv
+    ├── models                               <- Amazon Reviews'23 recommendation algorithms (weights + best params + LLM- and alpha-specific predictions)
+    │   └── electronics
+    │       ├── BPR
+    │       │   ├── best_params.json
+    │       │   ├── BPR.pth
+    │       │   └── predictions
+    │       │       └── gemini_2_5_flash
+    │       │           ├── alpha_0_25.pth
+    │       │           ├── alpha_0_5.pth
+    │       │           ├── alpha_0_75.pth
+    │       │           └── alpha_1_0.pth
+    │       └── LightGCN
+    │           ├── best_params.json
+    │           ├── LightGCN.pth
+    │           └── predictions
+    │               └── gemini_2_5_flash
+    │                   ├── alpha_0_25.pth
+    │                   ├── alpha_0_5.pth
+    │                   ├── alpha_0_75.pth
+    │                   └── alpha_1_0.pth
+    └── src                                  <- Source code of the sustainability-aware recommendation pipeline
+        ├── const.py                         <- Global constants of the pipeline
+        ├── evaluate.py                      <- Performance evaluation of recommendation algorithms
+        ├── predict.py                       <- Recommendation generation and sustainability-aware re-ranking
+        ├── preprocess.py                    <- Amazon Reviews'23 data preprocessing
+        ├── train.py                         <- Training pipeline for recommendation algorithms
+        └── utils.py                         <- Pipeline utility functions
 ```
 
 ## Compatibility Notes
