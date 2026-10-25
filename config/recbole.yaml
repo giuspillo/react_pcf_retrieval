@@ -1,0 +1,255 @@
+recbole:
+  # ------------------------------------------------------------------------------------
+  # Description: GPU device ID(s) to use for training
+  # Type: str
+  # Constraints: Single GPU ("0", "1", "2", etc.) or multi-GPU ("0,1,2")
+  # ------------------------------------------------------------------------------------
+  gpu_id: "0"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of worker processes for parallel data loading
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  worker: 0
+
+  # ------------------------------------------------------------------------------------
+  # Description: Random seed for reproducible results
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  seed: 42
+
+  # ------------------------------------------------------------------------------------
+  # Description: Logging level controlling RecBole training verbosity
+  # Type: str
+  # Constraints: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
+  # ------------------------------------------------------------------------------------
+  state: "INFO"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Enable reproducible results across all model runs
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  reproducibility: true
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to show training progress bar
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  show_progress: true
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to shuffle training data before each epoch
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  shuffle: true
+
+  load_col:
+    # ------------------------------------------------------------------------------------
+    # Description: List of dataset columns to load for interactions
+    # Type: list[str]
+    # Constraints: Valid column names from dataset
+    # ------------------------------------------------------------------------------------
+    inter: ["user_id", "item_id"]
+
+  # ------------------------------------------------------------------------------------
+  # Description: List of dataset columns to explicitly unload (remove from memory)
+  # Type: list[str]
+  # Constraints: Valid column names from dataset
+  # ------------------------------------------------------------------------------------
+  unload_col: null
+
+  # ------------------------------------------------------------------------------------
+  # Description: List of columns loaded but marked as unused in training
+  # Type: list[str]
+  # Constraints: Valid column names from dataset
+  # ------------------------------------------------------------------------------------
+  unused_col: null
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to filter interactions by users or items with no interactions
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  filter_inter_by_user_or_item: false
+
+  # ------------------------------------------------------------------------------------
+  # Description: Predefined dataset split file names [train, valid, test]
+  # Type: list[str]
+  # Constraints: ["<train_name>", "<valid_name>", "<test_name>"]
+  # ------------------------------------------------------------------------------------
+  benchmark_filename: ["train", "valid", "test"]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of training epochs
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  epochs: 500
+
+  # ------------------------------------------------------------------------------------
+  # Description: Optimization algorithm for training
+  # Type: str
+  # Constraints: "adam", "sgd", "adagrad", "rmsprop", "sparse_adam"
+  # ------------------------------------------------------------------------------------
+  learner: "adam"
+
+  train_neg_sample_args:
+    # ------------------------------------------------------------------------------------
+    # Description: Negative sampling distribution strategy for training
+    # Type: str
+    # Constraints: "uniform", "popularity"
+    # ------------------------------------------------------------------------------------
+    distribution: "uniform"
+
+    # ------------------------------------------------------------------------------------
+    # Description: Number of negative samples to generate for each positive sample
+    # Type: int
+    # Constraints: > 0
+    # ------------------------------------------------------------------------------------
+    sample_num: 1
+
+    # ------------------------------------------------------------------------------------
+    # Description: Whether to use dynamic negative sampling strategy during training
+    # Type: bool
+    # Constraints: True or False
+    # ------------------------------------------------------------------------------------
+    dynamic: false
+
+    # ------------------------------------------------------------------------------------
+    # Description: Number of candidate items to consider for negative sampling
+    # Type: int
+    # Constraints: >= 0
+    # ------------------------------------------------------------------------------------
+    candidate_num: 0
+
+  # ------------------------------------------------------------------------------------
+  # Description: Evaluation interval during training (evaluate every N epochs)
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  eval_step: 1
+
+  # ------------------------------------------------------------------------------------
+  # Description: Early stopping patience (stop after N epochs without improvement)
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  stopping_step: 15
+
+  # ------------------------------------------------------------------------------------
+  # Description: Maximum norm for gradient clipping during training
+  # Type: float
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  clip_grad_norm: null
+
+  # ------------------------------------------------------------------------------------
+  # Description: Decimal places for loss values in logs
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  loss_decimal_place: 4
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to apply power operation in L2 regularization loss calculation
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  require_pow: false
+
+  # ------------------------------------------------------------------------------------
+  # Description: Enable automatic mixed precision (AMP) training for faster computation
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  enable_amp: false
+
+  # ------------------------------------------------------------------------------------
+  # Description: Use gradient scaler with AMP to prevent gradient underflow
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  enable_scaler: false
+
+  eval_args:
+    # ------------------------------------------------------------------------------------
+    # Description: Grouping method for evaluation (group results by user or item)
+    # Type: str
+    # Constraints: "user", "item"
+    # ------------------------------------------------------------------------------------
+    group_by: "user"
+
+    # ------------------------------------------------------------------------------------
+    # Description: Recommendation ordering strategy for evaluation
+    # Type: str
+    # Constraints: "RO", "TO", "UO"
+    # ------------------------------------------------------------------------------------
+    order: "RO"
+
+    # ------------------------------------------------------------------------------------
+    # Description: Evaluation mode for ranking metrics computation
+    # Type: str
+    # Constraints: "full", "unbalanced"
+    # ------------------------------------------------------------------------------------
+    mode: "full"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether recommendation results are deterministic (no random sampling)
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  repeatable: true
+
+  # ------------------------------------------------------------------------------------
+  # Description: List of evaluation metrics to compute and report
+  # Type: list[str]
+  # Constraints: Valid metric names from RecBole
+  # ------------------------------------------------------------------------------------
+  metrics: ["Recall", "NDCG", "GiniIndex", "AveragePopularity", "TailPercentage", "ItemCoverage", "Precision", "MRR", "Hit"]
+
+  # ------------------------------------------------------------------------------------
+  # Description: List of K values for top-K evaluation metrics
+  # Type: list[int]
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  topk: [5, 10, 20]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Primary validation metric for early stopping and model selection
+  # Type: str
+  # Constraints: Valid metric name with optional @K suffix
+  # ------------------------------------------------------------------------------------
+  valid_metric: "NDCG@10"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Batch size for evaluation/prediction on validation and test sets
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  eval_batch_size: 4096
+
+  # ------------------------------------------------------------------------------------
+  # Description: Decimal places for evaluation metrics in logs and reports
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  metric_decimal_place: 6
+
+  # ------------------------------------------------------------------------------------
+  # Description: Computing device for model training
+  # Type: str
+  # Constraints: "cpu", "cuda", "mps"
+  # ------------------------------------------------------------------------------------
+  device: "mps"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Ratio of tail items to consider in TailPercentage metric calculation
+  # Type: float
+  # Constraints: 0.0 < tail_ratio < 1.0
+  # ------------------------------------------------------------------------------------
+  tail_ratio: 0.2

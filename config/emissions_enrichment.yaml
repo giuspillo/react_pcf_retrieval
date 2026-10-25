@@ -1,0 +1,78 @@
+emissions_enrichment:
+  # -------------------------------------------------------------------------------------
+  # Description: The number of independent carbon footprint estimates to compute
+  #              for each product.
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  num_estimates_per_product: 1
+
+  # -------------------------------------------------------------------------------------
+  # Description: The maximum number of concurrent requests to the enrichment system.
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  max_concurrent_requests: 5
+
+  # -------------------------------------------------------------------------------------
+  # Description: Whether to process ground truth data or not.
+  # Type: bool
+  # Constraints: True or False
+  # -------------------------------------------------------------------------------------
+  is_ground_truth: false
+
+  # -------------------------------------------------------------------------------------
+  # Description: Whether to compare the current estimates with baseline estimates.
+  # Type: bool
+  # Constraints: True or False
+  # -------------------------------------------------------------------------------------
+  compare_with_baseline: false
+
+  # -------------------------------------------------------------------------------------
+  # Description: The LLM to use for enrichment process.
+  # Type: str
+  # Constraints: <provider_name>:<model_name>
+  # -------------------------------------------------------------------------------------
+  model: "google_genai:gemini-2.5-flash"
+
+  # -------------------------------------------------------------------------------------
+  # Description: The temperature setting for the LLM during enrichment.
+  # Type: float
+  # Constraints: >= 0.0 and <= 1.0
+  # -------------------------------------------------------------------------------------
+  model_temperature: 0.0
+
+  # -------------------------------------------------------------------------------------
+  # Description: The maximum number of web search results to retrieve during enrichment.
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  search_web_max_results: 5
+
+  # -------------------------------------------------------------------------------------
+  # Description: The type of web search to perform during enrichment.
+  # Type: str
+  # Constraints: "auto", "fast", "deep"
+  # -------------------------------------------------------------------------------------
+  search_web_type: "auto"
+
+  # -------------------------------------------------------------------------------------
+  # Description: The maximum number of web search calls to make during enrichment.
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  search_web_max_calls: 3
+
+  # -------------------------------------------------------------------------------------
+  # Description: Whether to enable logging of the enrichment process.
+  # Type: bool
+  # Constraints: True or False
+  # -------------------------------------------------------------------------------------
+  enable_logging: true
+
+  # -------------------------------------------------------------------------------------
+  # Description: The directory where logs of the enrichment process will be stored.
+  # Type: str
+  # Constraints: Valid directory path
+  # -------------------------------------------------------------------------------------
+  logs_dir: "logs"

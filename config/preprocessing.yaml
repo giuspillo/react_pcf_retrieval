@@ -1,0 +1,23 @@
+preprocessing:
+  # ------------------------------------------------------------------------------------
+  # Description: Deduplication strategy for handling duplicate user-item interactions
+  # Type: str
+  # Constraints: "first", "last"
+  # ------------------------------------------------------------------------------------
+  deduplication_keep: "last"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Threshold for binarizing ratings
+  # Type: int
+  # Constraints: 1-5
+  # ------------------------------------------------------------------------------------
+  bin_rating_threshold: 5
+
+  # ------------------------------------------------------------------------------------
+  # Description: Ratios for splitting the dataset into train, validation, and test sets
+  # Type: float
+  # Constraints: 0.0-1.0 and sum to 1.0
+  # ------------------------------------------------------------------------------------
+  train_ratio: 0.8
+  valid_ratio: 0.1
+  test_ratio: 0.1

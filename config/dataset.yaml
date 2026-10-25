@@ -1,0 +1,7 @@
+dataset:
+  # ------------------------------------------------------------------------------------
+  # Description: Name of the Amazon Reviews'23 dataset to use
+  # Type: str
+  # Constraints: One of the supported datasets (see src/const.py, SUPPORTED_DATASETS)
+  # ------------------------------------------------------------------------------------
+  name: "electronics"

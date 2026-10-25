@@ -1,0 +1,105 @@
+ray_tune:
+  # ------------------------------------------------------------------------------------
+  # Description: Address of the Ray cluster to connect to
+  # Type: str
+  # Constraints: "local", "auto", "localhost:<port>", "ray://ip:port"
+  # ------------------------------------------------------------------------------------
+  address: "local"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of CPU cores to allocate to Ray cluster
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  num_cpus: 2
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of GPU devices to allocate to Ray cluster
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  num_gpus: 0
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to ignore errors when reinitializing Ray
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  ignore_reinit_error: false
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to start and include the Ray dashboard
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  include_dashboard: true
+
+  # ------------------------------------------------------------------------------------
+  # Description: Host/IP for the Ray dashboard server to bind to
+  # Type: str
+  # Constraints: "127.0.0.1", "0.0.0.0"
+  # ------------------------------------------------------------------------------------
+  dashboard_host: "127.0.0.1"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Port for the Ray dashboard server to listen on
+  # Type: int
+  # Constraints: 1-65535
+  # ------------------------------------------------------------------------------------
+  dashboard_port: 8265
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to configure logging for Ray
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  configure_logging: true
+
+  # ------------------------------------------------------------------------------------
+  # Description: Logging level for Ray driver process logger
+  # Type: str
+  # Constraints: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
+  # ------------------------------------------------------------------------------------
+  logging_level: "INFO"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Logging format string for Ray driver process
+  # Type: str
+  # Constraints: Valid Python logging format string with %(fieldname)s placeholders
+  # ------------------------------------------------------------------------------------
+  logging_format: "%(asctime)s %(levelname)s %(filename)s:%(lineno)s %(message)s"
+
+  # ------------------------------------------------------------------------------------
+  # Description: Whether to redirect worker output to driver process stdout
+  # Type: bool
+  # Constraints: True or False
+  # ------------------------------------------------------------------------------------
+  log_to_driver: false
+
+  # ------------------------------------------------------------------------------------
+  # Description: Random seed for Ray reproducibility
+  # Type: int
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  random_state: 42
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of trial samples for hyperparameter optimization
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  num_samples: 10
+
+  # ------------------------------------------------------------------------------------
+  # Description: Maximum number of epochs per trial
+  # Type: int
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  max_t: 20
+
+  # ------------------------------------------------------------------------------------
+  # Description: Minimum number of epochs before stopping underperforming trials
+  # Type: int
+  # Constraints: > 0 and < max_t
+  # ------------------------------------------------------------------------------------
+  grace_period: 5

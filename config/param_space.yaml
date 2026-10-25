@@ -1,0 +1,43 @@
+param_space:
+  # ------------------------------------------------------------------------------------
+  # Description: Batch size used during training, affecting convergence speed and
+  #              generalization
+  # Type: list[int]
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  train_batch_size: [512, 1024, 2048]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Learning rate controlling the step size of the optimizer
+  # Type: list[float]
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  learning_rate: [0.003, 0.001, 0.0003]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Weight decay (L2 regularization) applied to model parameters
+  # Type: list[float]
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  weight_decay: [1e-6, 1e-5, 1e-4]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Dimensionality of embedding vectors representing users and items
+  # Type: list[int]
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  embedding_size: [64, 128, 256]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Number of layers in the model architecture
+  # Type: list[int]
+  # Constraints: > 0
+  # ------------------------------------------------------------------------------------
+  n_layers: [1, 2, 3]
+
+  # ------------------------------------------------------------------------------------
+  # Description: Regularization weight applied to embedding parameters
+  # Type: list[float]
+  # Constraints: >= 0
+  # ------------------------------------------------------------------------------------
+  reg_weight: [1e-5, 1e-4]
