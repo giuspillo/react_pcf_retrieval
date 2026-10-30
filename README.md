@@ -26,23 +26,23 @@ The resource has two components and a use case:
 │   └── zero_shot.py                     <- Zero-shot LLM baseline (same prompt as below)
 ├── ground_truth/                        <- (2) The ground truth
 │   ├── data/                            <- One JSONL file per domain (GT value + all calls, see below)
-│   ├── logs/                            <- Execution logs of PCF-Scout (one file per call) + index.tsv
+│   ├── logs/                            <- (DVC) Execution logs of PCF-Scout (one file per call) + index.tsv
 │   ├── evaluate.py                      <- Reproduces the ground-truth analyses of the paper
 │   └── results/                         <- Output of evaluate.py (TSV)
 ├── use_case/                            <- (3) Sustainability-aware recommendation
 │   ├── data/electronics/
-│   │   ├── raw/                         <- Amazon Reviews'23 user reviews and item metadata of the catalog
+│   │   ├── raw/                         <- (DVC) Amazon Reviews'23 user reviews and item metadata of the catalog
 │   │   ├── maps/                        <- User and item maps
 │   │   ├── electronics{,.train,.valid,.test}.inter   <- RecBole atomic files (temporal split per user)
 │   │   └── pcf_annotations/             <- PCF of the 9,710 catalog products estimated by PCF-Scout
-│   ├── logs/                            <- Execution logs of PCF-Scout on the catalog
+│   ├── logs/                            <- (DVC) Execution logs of PCF-Scout on the catalog
 │   ├── src/                             <- preprocess, train, predict (SaS re-ranking), evaluate
 │   └── results/electronics.tsv          <- All recommendation results (k = 5, 10, 20; alpha = 0.25, 0.5, 0.75, 1.0)
 ├── Makefile
 └── pyproject.toml
 ```
 
-Large files (`ground_truth/logs`, `use_case/logs`, `use_case/data/electronics/raw`) are tracked with DVC and also archived on Zenodo.
+Folders marked with (DVC) are not stored in Git: see [Large files](#large-files-dvc-and-zenodo) to download them.
 
 ## Ground truth format
 
@@ -87,12 +87,39 @@ Large files (`ground_truth/logs`, `use_case/logs`, `use_case/data/electronics/ra
 
 `make preprocess-data` regenerates the atomic files and the maps from `raw/user_reviews.jsonl`.
 
+## Large files (DVC and Zenodo)
+
+The following folders are versioned with [DVC](https://dvc.org) and stored on [DagsHub](https://dagshub.com/<user>/<repo>), not in Git:
+
+| Folder | Content | Size |
+|---|---|---|
+| `ground_truth/logs/` | Execution logs of PCF-Scout on the ground truth (4,446 files) | 90 MB |
+| `use_case/logs/` | Execution logs of PCF-Scout on the use-case catalog (9,672 files) | 289 MB |
+| `use_case/data/electronics/raw/` | Amazon Reviews'23 user reviews and item metadata of the catalog | 296 MB |
+
+Everything else (ground truth data, use-case splits and maps, PCF annotations of the catalog, results) is in Git. The large files are only needed to inspect the agent logs and to re-run the use-case preprocessing or PCF-Scout on the catalog.
+
+**Option 1: DVC.** After cloning the repository and installing the project (see [Setup](#setup)):
+
+```bash
+dvc pull
+```
+
+**Option 2: Zenodo.** The same folders are archived on Zenodo ([DOI](https://doi.org/<zenodo-doi>)) as three zip files. Download them and unzip them in the repository root, which restores the folders above:
+
+```bash
+unzip ground_truth_logs.zip
+unzip use_case_logs.zip
+unzip use_case_raw_data.zip
+```
+
 ## Setup
 
 ```bash
 conda create -n pcf-scout python=3.14
 conda activate pcf-scout
 pip install -e .
+pip install "dvc[s3]"   # only to download the large files with DVC
 ```
 
 API keys are read from the environment (or from a `.env` file): `GOOGLE_API_KEY` (Gemini), `OPENAI_API_KEY` (o3-mini) and `EXA_API_KEY` (web search).
