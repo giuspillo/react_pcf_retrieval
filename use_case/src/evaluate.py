@@ -3,6 +3,8 @@
 Evaluate trained RecBole models.
 """
 
+import os
+
 import numpy as np
 import pandas as pd
 import torch
@@ -11,7 +13,7 @@ from recbole.evaluator import Evaluator
 from recbole.quick_start import load_data_and_model
 from tqdm import tqdm
 
-from src.const import (
+from use_case.src.const import (
     DATA_INTERIM_MAPS_IMAP_PATH,
     DATA_PROCESSED_AR23_IM_G25F_ELEC_PATH,
     DATASET_NAME_ELEC,
@@ -34,9 +36,10 @@ from src.const import (
     RERANKING_ALPHA_SUS,
     SUPPORTED_DATASETS,
     SUPPORTED_MODELS,
+    RESULTS_ELEC_PATH,
     SUPPORTED_RERANKING_ALPHAS,
 )
-from src.utils import load_config, load_jsonl
+from use_case.src.utils import load_config, load_jsonl
 
 # Load configuration
 config = load_config()
@@ -382,6 +385,31 @@ def evaluate_recsys() -> None:
             print(table_df.to_string(index=False))
 
     print("\n" + "=" * 100 + "\n")
+
+    # Save all results (one row per model, top-k and alpha), using the
+    # RecBole metric names as column headers
+    column_names = {
+        "MODEL": "Model",
+        "TOP-K": "Top-K",
+        "ALPHA": "Alpha",
+        "EMISSIONS": "Emissions",
+        "AVERAGEPOPULARITY": "AveragePopularity",
+        "GINIINDEX": "GiniIndex",
+        "ITEMCOVERAGE": "ItemCoverage",
+        "TAILPERCENTAGE": "TailPercentage",
+        "RECALL": "Recall",
+        "PRECISION": "Precision",
+        "HIT": "Hit",
+    }
+    out_df = results_df.rename(
+        columns=lambda c: column_names.get(c, c if c in {"F1", "MRR", "NDCG"} else c.title()),
+    )
+    first = ["Model", "Top-K", "Alpha"]
+    out_df = out_df[first + sorted(c for c in out_df.columns if c not in first)]
+    out_df = out_df.sort_values(first).reset_index(drop=True)
+    os.makedirs(os.path.dirname(RESULTS_ELEC_PATH), exist_ok=True)
+    out_df.to_csv(RESULTS_ELEC_PATH, sep="\t", index=False, float_format="%.4f")
+    print(f"Results saved to {RESULTS_ELEC_PATH}")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,123 @@
-# react_pcf_retrieval
+# PCF-Scout
 
-## Zero-Shot LLM Baseline Prompt
+Resource accompanying the paper *"PCF-Scout: ..."* (ECIR 2027, resource track).
+
+The resource has two components and a use case:
+
+1. **PCF-Scout**, a ReAct agent (LangGraph) that retrieves the official Product Carbon Footprint (PCF, in kg CO2e) of a product from the web, or estimates it when no official value is available. Each answer comes with its source (`official` / `estimated`) and an explanation.
+2. **A ground truth of 582 products** (194 per domain: Electronics, Clothing, Home and Kitchen) with official PCF values from Environmental Product Declarations (EPDs). For every item it includes the PCF-Scout calls and the zero-shot baseline estimates with Gemini 2.5 Flash and OpenAI o3-mini, together with the full execution logs of the agent.
+3. **A use case** of sustainability-aware recommendation on Amazon Reviews'23 *Electronics*: PCF-Scout annotates the catalog, and the recommendations of BPR and LightGCN are re-ranked with the Sustainability-aware Score (SaS).
+
+## Repository structure
+
+```txt
+.
+├── config/                              <- YAML configuration of all the pipelines
+├── pcf_scout/                           <- (1) The agent
+│   ├── agent/                           <- LangGraph ReAct agent
+│   │   ├── const.py                     <- Agent constants (defaults, graph nodes, tools)
+│   │   ├── context.py                   <- Runtime configuration (LLM, web search, logging)
+│   │   ├── graph.py                     <- Agent graph and execution logic
+│   │   ├── prompts.py                   <- Prompts
+│   │   ├── state.py                     <- Execution state
+│   │   └── tools.py                     <- search_web tool (Exa)
+│   ├── const.py  utils.py               <- Paths and helpers
+│   ├── run.py                           <- Run PCF-Scout on the ground truth or on the use-case catalog
+│   └── zero_shot.py                     <- Zero-shot LLM baseline (same prompt as below)
+├── ground_truth/                        <- (2) The ground truth
+│   ├── data/                            <- One JSONL file per domain (GT value + all calls, see below)
+│   ├── logs/                            <- Execution logs of PCF-Scout (one file per call) + index.tsv
+│   ├── evaluate.py                      <- Reproduces the ground-truth analyses of the paper
+│   └── results/                         <- Output of evaluate.py (TSV)
+├── use_case/                            <- (3) Sustainability-aware recommendation
+│   ├── data/electronics/
+│   │   ├── raw/                         <- Amazon Reviews'23 user reviews and item metadata of the catalog
+│   │   ├── maps/                        <- User and item maps
+│   │   ├── electronics{,.train,.valid,.test}.inter   <- RecBole atomic files (temporal split per user)
+│   │   └── pcf_annotations/             <- PCF of the 9,710 catalog products estimated by PCF-Scout
+│   ├── logs/                            <- Execution logs of PCF-Scout on the catalog
+│   ├── src/                             <- preprocess, train, predict (SaS re-ranking), evaluate
+│   └── results/electronics.tsv          <- All recommendation results (k = 5, 10, 20; alpha = 0.25, 0.5, 0.75, 1.0)
+├── Makefile
+└── pyproject.toml
+```
+
+Large files (`ground_truth/logs`, `use_case/logs`, `use_case/data/electronics/raw`) are tracked with DVC and also archived on Zenodo.
+
+## Ground truth format
+
+`ground_truth/data/<domain>.jsonl` contains one item per line:
+
+```json
+{
+  "id": "clothing_001",
+  "domain": "clothing",
+  "title": "Eddy Rider Leather Jacket Black",
+  "pcf_kg": 43.6,
+  "emission_class": "high",
+  "zero_shot": {
+    "gemini_2_5_flash": [78.1, 78.1, 41.0, 41.0],
+    "openai_o3_mini": [120.0, 70.0, 70.0, 70.0]
+  },
+  "pcf_scout": {
+    "gemini_2_5_flash": [
+      {"call": 1, "value": 150.0, "source": "estimated", "explanation": "..."},
+      ...
+    ],
+    "openai_o3_mini": [...]
+  }
+}
+```
+
+- `pcf_kg`: official PCF from the EPD (kg CO2e per product).
+- `emission_class`: `low` / `medium` / `high`, from the 33rd and 67th percentiles of `pcf_kg` within the domain.
+- `zero_shot`: 4 independent zero-shot estimates per LLM (see `pcf_scout/zero_shot.py`).
+- `pcf_scout`: up to 4 independent calls of PCF-Scout per LLM, each with value, source (`official` or `estimated`) and explanation. Calls that were interrupted (e.g., o3-mini runs failing during web search) are missing; with Gemini 2.5 Flash on Electronics, most items have a single call. `ground_truth/evaluate.py` only uses the calls covering at least half of the items (see its docstring for the full protocol).
+
+`ground_truth/logs/<llm>/<domain>/` contains the execution log of each agent call (input, web-search queries and results, answer). Logs of calls that were repeated (e.g., interrupted runs) are kept as well; `ground_truth/logs/index.tsv` lists every log with its item, whether it produced an answer, the number of web searches, the answer, and whether the answer is one of the released calls.
+
+## Use-case data
+
+`use_case/data/electronics/` contains the 15-core subset of the Amazon Reviews'23 *Electronics* reviews used in the paper (21,751 users, 11,495 items, 464,457 interactions) in RecBole atomic format:
+
+- `rating`: binarized feedback, 1 for 5-star reviews and 0 for 1–4-star reviews (threshold in `config/preprocessing.yaml`);
+- split: temporal per user, with the oldest 80% of each user's interactions (rounded down) for training, the next 10% for validation, and the remaining most recent ones for test (ratios in `config/preprocessing.yaml`); validation and test interactions with items never seen in training are removed. The resulting sets contain 363,022 / 35,117 / 65,862 interactions;
+- `maps/`: mapping between RecBole indices and Amazon user IDs / item ASINs (with their parent ASIN, which links each item to its PCF annotation);
+- `pcf_annotations/gemini_2_5_flash.jsonl`: PCF estimated by PCF-Scout (Gemini 2.5 Flash) for each of the 9,710 parent products of the catalog (`value`, `source`, `explanation`).
+
+`make preprocess-data` regenerates the atomic files and the maps from `raw/user_reviews.jsonl`.
+
+## Setup
+
+```bash
+conda create -n pcf-scout python=3.14
+conda activate pcf-scout
+pip install -e .
+```
+
+API keys are read from the environment (or from a `.env` file): `GOOGLE_API_KEY` (Gemini), `OPENAI_API_KEY` (o3-mini) and `EXA_API_KEY` (web search).
+
+## Usage
+
+All commands are run from the repository root.
+
+| Step | Command |
+|---|---|
+| Run PCF-Scout (settings in `config/dataset.yaml` and `config/emissions_enrichment.yaml`) | `make run-pcf-scout` |
+| Run the zero-shot baseline (settings in `config/zero_shot.yaml`) | `make run-zero-shot` |
+| Reproduce the ground-truth analyses (standard library only) | `make evaluate-ground-truth` |
+| Use case: preprocess the reviews | `make preprocess-data` |
+| Use case: tune and train BPR and LightGCN | `make train-recsys` |
+| Use case: recommend and re-rank with SaS | `make predict-recommendations` |
+| Use case: evaluate (writes `use_case/results/electronics.tsv`) | `make evaluate-recsys` |
+
+`make <target> PYTHON=python` runs a step with the current interpreter instead of the conda environment.
+
+**Running PCF-Scout.** With `is_ground_truth: true`, the agent is run on `ground_truth/data/<dataset>.jsonl` for the selected LLM, `num_estimates_per_product` times per item (4 in the paper). With `is_ground_truth: false`, it annotates the use-case catalog (`use_case/data/electronics/raw/item_metadata.jsonl`, one call per product). New estimates and logs are written to `outputs/`, never over the released data; interrupted runs are resumed from there.
+
+## Zero-shot baseline prompt
+
+Used by `pcf_scout/zero_shot.py`, with `{product_category}` set to the domain name and the product title as product data.
 
 ```text
 You are an expert in life cycle analysis (LCA) and CO2e emission calculation for {product_category} products.
@@ -34,90 +151,6 @@ Reply ONLY with a JSON object containing these exact fields:
   "explanation": "<detailed explanation including data source>"
 }
 Do not include any markdown formatting or additional JSON wrappers.
-```
-
-## Project Structure
-
-```txt
-.
-├── config                                   <- Project configuration
-│   ├── dataset.yaml
-│   ├── emissions_enrichment.yaml
-│   ├── evaluation.yaml
-│   ├── inference.yaml
-│   ├── param_space.yaml
-│   ├── preprocessing.yaml
-│   ├── ray_tune.yaml
-│   └── recbole.yaml
-├── ecoamazon                                <- Eco-Amazon resource
-│   ├── data                                 <- Amazon Reviews'23 item metadata enriched with PCFs
-│   │   └── gemini_2_5_flash                 <- Estimates by Gemini 2.5 Flash as the agent's reasoning engine
-│   │       └── electronics.jsonl
-│   └── src                                  <- Source code to enrich data with PCFs
-│       ├── agent                            <- Agent to retrieve and estimate PCFs
-│       │   ├── const.py                     <- Global constants of the agent
-│       │   ├── context.py                   <- Runtime configuration for the agent
-│       │   ├── graph.py                     <- Agent graph structure and execution logic
-│       │   ├── prompts.py                   <- Prompts for the LLM used as the agent's reasoning engine
-│       │   ├── state.py                     <- Execution state of the agent
-│       │   └── tools.py                     <- Available tools for the agent
-│       └── enrich_with_emissions.py         <- Script to run the agent and enrich data with PCFs
-├── ground_truths                            <- Ground truths with known PCFs and estimates (zero-shot vs. agent)
-│   ├── gemini_2_5_flash                     <- Estimates by Gemini 2.5 Flash
-│   │   ├── clothing.jsonl
-│   │   ├── electronics.jsonl
-│   │   └── home_and_kitchen.jsonl
-│   └── openai_o3_mini                       <- Estimates by OpenAI o3-mini
-│       ├── clothing.jsonl
-│       ├── electronics.jsonl
-│       └── home_and_kitchen.jsonl
-├── Makefile                                 <- Make commands
-├── pyproject.toml                           <- Project settings
-├── README.md                                <- Project documentation
-├── .env.example                             <- Example of .env file
-├── .gitattributes                           <- Git path-specific attributes
-├── .gitignore                               <- Files ignored by Git
-├── recsys_results                           <- Evalution results from the recommendation pipeline
-│   └── gemini_2_5_flash                     <- Evalution results on Gemini 2.5 Flash PCF estimates
-│       └── electronics.tsv
-└── use_case                                 <- Use case: Sustainability-aware recommendation pipeline
-    ├── data                                 <- Amazon Reviews'23 data (raw and processed user reviews + item and user maps)
-    │   └── electronics
-    │       ├── electronics.inter
-    │       ├── electronics.jsonl
-    │       ├── electronics.test.inter
-    │       ├── electronics.train.inter
-    │       ├── electronics.valid.inter
-    │       └── maps
-    │           ├── item_map.tsv
-    │           └── user_map.tsv
-    ├── models                               <- Amazon Reviews'23 recommendation algorithms (weights + best params + LLM- and alpha-specific predictions)
-    │   └── electronics
-    │       ├── BPR
-    │       │   ├── best_params.json
-    │       │   ├── BPR.pth
-    │       │   └── predictions
-    │       │       └── gemini_2_5_flash
-    │       │           ├── alpha_0_25.pth
-    │       │           ├── alpha_0_5.pth
-    │       │           ├── alpha_0_75.pth
-    │       │           └── alpha_1_0.pth
-    │       └── LightGCN
-    │           ├── best_params.json
-    │           ├── LightGCN.pth
-    │           └── predictions
-    │               └── gemini_2_5_flash
-    │                   ├── alpha_0_25.pth
-    │                   ├── alpha_0_5.pth
-    │                   ├── alpha_0_75.pth
-    │                   └── alpha_1_0.pth
-    └── src                                  <- Source code of the sustainability-aware recommendation pipeline
-        ├── const.py                         <- Global constants of the pipeline
-        ├── evaluate.py                      <- Performance evaluation of recommendation algorithms
-        ├── predict.py                       <- Recommendation generation and sustainability-aware re-ranking
-        ├── preprocess.py                    <- Amazon Reviews'23 data preprocessing
-        ├── train.py                         <- Training pipeline for recommendation algorithms
-        └── utils.py                         <- Pipeline utility functions
 ```
 
 ## Compatibility Notes

@@ -1,0 +1,7 @@
+domain	llm	items_per_call	mae_pcf_scout	mae_zero_shot	mae_delta_pct
+electronics	gemini_2_5_flash	113	45.53	71.27	-36.12
+electronics	openai_o3_mini	122|112|115|103	61.31	54.56	+12.37
+clothing	gemini_2_5_flash	56|60|59|55	2.65	8.93	-70.31
+clothing	openai_o3_mini	70|66|66|65	3.65	6.68	-45.37
+home_and_kitchen	gemini_2_5_flash	128|129|126|127	48.74	77.81	-37.37
+home_and_kitchen	openai_o3_mini	128|124|125|120	52.28	64.40	-18.83

@@ -1,0 +1,7 @@
+domain	llm	items	items_pcf_scout_better_pct	wilcoxon_z	wilcoxon_p
+electronics	gemini_2_5_flash	194	60.8	-2.296	2.17e-02
+electronics	openai_o3_mini	194	56.2	0.705	4.81e-01
+clothing	gemini_2_5_flash	194	65.5	-5.527	3.27e-08
+clothing	openai_o3_mini	194	64.9	-4.922	8.56e-07
+home_and_kitchen	gemini_2_5_flash	194	60.8	-2.629	8.55e-03
+home_and_kitchen	openai_o3_mini	194	70.1	-4.294	1.75e-05

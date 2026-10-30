@@ -1,7 +1,8 @@
 emissions_enrichment:
   # -------------------------------------------------------------------------------------
   # Description: The number of independent carbon footprint estimates to compute
-  #              for each product.
+  #              for each product (4 for the ground truth in the paper, 1 for
+  #              the use-case catalog).
   # Type: int
   # Constraints: > 0
   # -------------------------------------------------------------------------------------
@@ -75,4 +76,4 @@ emissions_enrichment:
   # Type: str
   # Constraints: Valid directory path
   # -------------------------------------------------------------------------------------
-  logs_dir: "logs"
+  logs_dir: "outputs/logs"

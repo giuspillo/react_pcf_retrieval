@@ -17,7 +17,7 @@ from recbole.quick_start import load_data_and_model
 from recbole.utils.case_study import full_sort_topk
 from tqdm import tqdm
 
-from src.const import (
+from use_case.src.const import (
     DATA_INTERIM_MAPS_IMAP_PATH,
     DATA_PROCESSED_AR23_IM_G25F_ELEC_PATH,
     DATASET_NAME_ELEC,
@@ -43,7 +43,7 @@ from src.const import (
     SUPPORTED_MODELS,
     SUPPORTED_RERANKING_ALPHAS,
 )
-from src.utils import load_config, load_jsonl
+from use_case.src.utils import load_config, load_jsonl
 
 # Load configuration
 config = load_config()
@@ -502,10 +502,9 @@ def predict_recommendations() -> None:
                     "model": model,
                     "alpha": alpha,
                 }
-                torch.save(
-                    results,
-                    model_registry[model]["preds_paths"][llm][alpha],
-                )
+                preds_path = model_registry[model]["preds_paths"][llm][alpha]
+                os.makedirs(os.path.dirname(preds_path), exist_ok=True)
+                torch.save(results, preds_path)
 
     # Print summary of saved predictions
     print("Predict Recommendations Summary")

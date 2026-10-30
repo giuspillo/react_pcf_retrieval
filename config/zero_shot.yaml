@@ -1,0 +1,44 @@
+zero_shot:
+  # -------------------------------------------------------------------------------------
+  # Description: Whether to estimate the ground-truth items (true) or the use-case
+  #              catalog (false).
+  # Type: bool
+  # Constraints: True or False
+  # -------------------------------------------------------------------------------------
+  is_ground_truth: true
+
+  # -------------------------------------------------------------------------------------
+  # Description: The number of independent zero-shot estimates to compute for each
+  #              product (4 for the ground truth in the paper).
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  num_estimates_per_product: 4
+
+  # -------------------------------------------------------------------------------------
+  # Description: The maximum number of concurrent requests to the LLM.
+  # Type: int
+  # Constraints: > 0
+  # -------------------------------------------------------------------------------------
+  max_concurrent_requests: 5
+
+  # -------------------------------------------------------------------------------------
+  # Description: The LLM to use.
+  # Type: str
+  # Constraints: <provider_name>:<model_name>
+  # -------------------------------------------------------------------------------------
+  model: "google_genai:gemini-2.5-flash"
+
+  # -------------------------------------------------------------------------------------
+  # Description: The temperature setting for the LLM (null = provider default).
+  # Type: float
+  # Constraints: >= 0.0 and <= 1.0
+  # -------------------------------------------------------------------------------------
+  model_temperature: null
+
+  # -------------------------------------------------------------------------------------
+  # Description: The product fields passed to the LLM as product data.
+  # Type: list[str]
+  # Constraints: Fields of the input records
+  # -------------------------------------------------------------------------------------
+  product_fields: ["title"]

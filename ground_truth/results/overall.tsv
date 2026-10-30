@@ -1,0 +1,7 @@
+domain	llm	mae_pcf_scout	mae_zero_shot	mae_delta_pct	spearman_pcf_scout	spearman_zero_shot	spearman_norm_pcf_scout	spearman_norm_zero_shot	spearman_norm_delta_pct
+electronics	gemini_2_5_flash	61.67	78.59	-21.53	0.8478	0.8158	0.924	0.908	+1.76
+electronics	openai_o3_mini	82.21	64.75	+26.95	0.7603	0.8111	0.880	0.906	-2.81
+clothing	gemini_2_5_flash	4.52	8.41	-46.21	0.5957	0.5793	0.798	0.790	+1.04
+clothing	openai_o3_mini	4.14	20.27	-79.56	0.6374	0.6773	0.819	0.839	-2.38
+home_and_kitchen	gemini_2_5_flash	62.47	87.55	-28.64	0.7688	0.7060	0.884	0.853	+3.68
+home_and_kitchen	openai_o3_mini	60.81	60.02	+1.31	0.7576	0.6561	0.879	0.828	+6.13

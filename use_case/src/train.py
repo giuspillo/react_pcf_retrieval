@@ -15,7 +15,7 @@ from ray.tune.schedulers import ASHAScheduler
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from recbole.quick_start import run_recbole
 
-from src.const import (
+from use_case.src.const import (
     DATA_PROCESSED_AR23_UR_DIR,
     DATASET_NAME_ELEC,
     MODEL_CHECKPOINT_FILE_FORMAT,
@@ -33,7 +33,7 @@ from src.const import (
     SUPPORTED_MODELS,
     TUNING_VAL_METRIC,
 )
-from src.utils import load_config
+from use_case.src.utils import load_config
 
 # Load configuration
 config = load_config()

@@ -1,0 +1,10 @@
+domain	class	items	min	max	mean	p33	p67
+electronics	low	65	1.62	77.60	30.90	77.73	232.00
+electronics	medium	65	78.00	232.00	170.04	77.73	232.00
+electronics	high	64	233.00	668.00	321.75	77.73	232.00
+clothing	low	66	0.32	5.10	2.81	5.10	10.67
+clothing	medium	63	5.14	10.60	8.09	5.10	10.67
+clothing	high	65	10.70	43.60	16.00	5.10	10.67
+home_and_kitchen	low	66	0.02	21.00	7.02	21.00	88.01
+home_and_kitchen	medium	63	21.20	82.66	52.62	21.00	88.01
+home_and_kitchen	high	65	90.69	751.17	196.48	21.00	88.01

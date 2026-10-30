@@ -1,0 +1,9 @@
+domain	llm	answers	official_pct	estimated_pct
+electronics	gemini_2_5_flash	248	53.6	46.4
+electronics	openai_o3_mini	745	60.7	39.3
+clothing	gemini_2_5_flash	770	29.9	70.1
+clothing	openai_o3_mini	766	34.9	65.1
+home_and_kitchen	gemini_2_5_flash	766	66.6	33.4
+home_and_kitchen	openai_o3_mini	759	65.5	34.5
+all	gemini_2_5_flash	1784	48.9	51.1
+all	openai_o3_mini	2270	53.6	46.4

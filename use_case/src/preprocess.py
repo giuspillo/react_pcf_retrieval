@@ -5,7 +5,7 @@ Preprocess data.
 
 import pandas as pd
 
-from src.const import (
+from use_case.src.const import (
     DATA_INTERIM_MAPS_IMAP_PATH,
     DATA_INTERIM_MAPS_UMAP_PATH,
     DATA_PROCESSED_AR23_UR_ELEC_FULL_PATH,
@@ -30,7 +30,7 @@ from src.const import (
     MAP_UMAP_USER_INDEX_COL,
     SUPPORTED_DATASETS,
 )
-from src.utils import load_config
+from use_case.src.utils import load_config
 
 # Load configuration
 config = load_config()

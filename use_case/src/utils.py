@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-from src.const import CONFIG_DIR, CONFIG_FILE_FORMAT
+from use_case.src.const import CONFIG_DIR, CONFIG_FILE_FORMAT
 
 
 def load_config() -> dict:

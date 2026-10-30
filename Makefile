@@ -1,4 +1,8 @@
-conda_env = eco-amazon-electronics
+SHELL := /bin/bash
+
+conda_env = pcf-scout
+# Python interpreter (override e.g. with: make evaluate-ground-truth PYTHON=python)
+PYTHON ?= conda run --no-capture-output -n $(conda_env) python
 
 GIT_COMMIT = $(shell git rev-parse --short HEAD 2>/dev/null || echo "No commit / Not a git repo")
 GIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "Unknown branch")
@@ -6,9 +10,9 @@ RUNNING_USER = $(shell whoami 2>/dev/null || echo "Unknown user")
 OS_INFO = $(shell uname -srm 2>/dev/null || echo "Unknown OS")
 
 define run_pipeline_step
-    @mkdir -p logs/pipeline/electronics
+    @mkdir -p outputs/pipeline_logs
     @TIMESTAMP=$$(date '+%Y%m%d_%H%M%S'); \
-    LOG_FILE="logs/pipeline/electronics/$(1)_$${TIMESTAMP}.log"; \
+    LOG_FILE="outputs/pipeline_logs/$(1)_$${TIMESTAMP}.log"; \
     echo "====================================================================================================" | tee -a $$LOG_FILE; \
     echo "Starting Step | $(1)" | tee -a $$LOG_FILE; \
     echo "Git Branch    | $(GIT_BRANCH)" | tee -a $$LOG_FILE; \
@@ -21,7 +25,7 @@ define run_pipeline_step
     echo "====================================================================================================" | tee -a $$LOG_FILE; \
     echo "Configurations" | tee -a $$LOG_FILE; \
     echo "====================================================================================================" | tee -a $$LOG_FILE; \
-    for f in src/config/*.yaml; do \
+    for f in config/*.yaml; do \
         if [ -f "$$f" ]; then \
             echo "" | tee -a $$LOG_FILE; \
             echo "  ==> $$f <==" | tee -a $$LOG_FILE; \
@@ -35,7 +39,7 @@ define run_pipeline_step
     echo "Process Execution" | tee -a $$LOG_FILE; \
     echo "====================================================================================================" | tee -a $$LOG_FILE; \
     START_TIME=$$(date +%s); \
-    conda run --no-capture-output -n $(conda_env) python -u -m $(2) 2>&1 | tee -a $$LOG_FILE; \
+    $(PYTHON) -u $(2) 2>&1 | tee -a $$LOG_FILE; \
     EXIT_CODE=$${PIPESTATUS[0]}; \
     END_TIME=$$(date +%s); \
     ELAPSED=$$(($$END_TIME - $$START_TIME)); \
@@ -54,34 +58,50 @@ define run_pipeline_step
 endef
 
 # ===================================
-# DATA PREPROCESSING
+# PCF-SCOUT: PCF ESTIMATION
+# (ground truth or use-case catalog, see config/emissions_enrichment.yaml)
+# ===================================
+run-pcf-scout:
+	$(call run_pipeline_step,run_pcf_scout,-m pcf_scout.run)
+
+# ===================================
+# ZERO-SHOT BASELINE
+# (settings in config/zero_shot.yaml)
+# ===================================
+run-zero-shot:
+	$(call run_pipeline_step,run_zero_shot,-m pcf_scout.zero_shot)
+
+# ===================================
+# GROUND TRUTH: PAPER ANALYSES
+# ===================================
+evaluate-ground-truth:
+	$(call run_pipeline_step,evaluate_ground_truth,ground_truth/evaluate.py)
+
+# ===================================
+# USE CASE: DATA PREPROCESSING
 # ===================================
 preprocess-data:
-	$(call run_pipeline_step,preprocess_data,src.data.preprocess)
+	$(call run_pipeline_step,preprocess_data,-m use_case.src.preprocess)
 
 # ===================================
-# EMISSION DATA ENRICHMENT
-# ===================================
-enrich-data-with-emissions:
-	$(call run_pipeline_step,enrich_data_with_emissions,src.data.enrich_with_emissions)
-
-# ===================================
-# MODEL TRAINING
+# USE CASE: MODEL TRAINING
 # ===================================
 train-recsys:
-	$(call run_pipeline_step,train_recsys,src.modeling.train)
+	$(call run_pipeline_step,train_recsys,-m use_case.src.train)
 
 # ===================================
-# MODEL INFERENCE
+# USE CASE: MODEL INFERENCE
 # +
 # SUSTAINABILITY-AWARE RECOMMENDATION
 # RE-RANKING
 # ===================================
 predict-recommendations:
-	$(call run_pipeline_step,predict_recommendations,src.modeling.predict)
+	$(call run_pipeline_step,predict_recommendations,-m use_case.src.predict)
 
 # ===================================
-# MODEL EVALUATION
+# USE CASE: MODEL EVALUATION
 # ===================================
 evaluate-recsys:
-	$(call run_pipeline_step,evaluate_recsys,src.modeling.evaluate)
+	$(call run_pipeline_step,evaluate_recsys,-m use_case.src.evaluate)
+
+.PHONY: run-pcf-scout run-zero-shot evaluate-ground-truth preprocess-data train-recsys predict-recommendations evaluate-recsys
