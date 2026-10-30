@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pcf-scout"
 version = "1.0.0"
-description = "PCF-Scout: an agent for retrieving and estimating product carbon footprints, with an EPD-based ground truth"
+description = "PCF-Scout: Agentic Approaches for Estimating E-commerce Product Carbon Footprint in Emissions-aware Applications"
 readme = "README.md"
 requires-python = ">=3.11"
 
@@ -35,4 +35,4 @@ dependencies = [
 include = ["pcf_scout*", "use_case*"]
 
 [project.urls]
-"Source" = "https://github.com/swapUniba/react_pcf_retrieval"
+"Source" = "https://github.com/giuspillo/react_pcf_retrieval"
