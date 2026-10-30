@@ -1,6 +1,6 @@
 # PCF-Scout
 
-Resource accompanying the paper *"PCF-Scout: ..."* (ECIR 2027, resource track).
+Repository for the paper *"PCF-Scout: Agentic Approaches for Estimating E-commerce Product Carbon Footprint in Emissions-aware Applications"* (submitted to ECIR 2027, resource track).
 
 The resource has two components and a use case:
 
