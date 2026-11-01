@@ -1,6 +1,6 @@
 # PCF-Scout
 
-Repository for the paper *"PCF-Scout: Agentic Approaches for Estimating E-commerce Product Carbon Footprint in Emissions-aware Applications"* (submitted to ECIR 2027, resource track).
+Repository for the paper *"PCF-Scout: Agentic Product Carbon Footprint Estimation for Sustainable Retrieval and Recommendation"* (submitted to ECIR 2027, resource track).
 
 Zenodo repository [is available here](https://zenodo.org/records/23861945).
 
