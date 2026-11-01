@@ -2,6 +2,8 @@
 
 Repository for the paper *"PCF-Scout: Agentic Approaches for Estimating E-commerce Product Carbon Footprint in Emissions-aware Applications"* (submitted to ECIR 2027, resource track).
 
+Zenodo repository [is available here](https://zenodo.org/records/23861945).
+
 The resource has two components and a use case:
 
 1. **PCF-Scout**, a ReAct agent (LangGraph) that retrieves the official Product Carbon Footprint (PCF, in kg CO2e) of a product from the web, or estimates it when no official value is available. Each answer comes with its source (`official` / `estimated`) and an explanation.
@@ -42,7 +44,7 @@ The resource has two components and a use case:
 └── pyproject.toml
 ```
 
-Folders marked with (DVC) are not stored in Git: see [Large files](#large-files-dvc-and-zenodo) to download them.
+Folders marked with (DVC) are not stored in Git: see [Large files](#large-files-dvc-and-zenodo) to download them. 
 
 ## Ground truth format
 
