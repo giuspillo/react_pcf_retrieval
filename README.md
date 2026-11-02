@@ -2,7 +2,8 @@
 
 Repository for the paper *"PCF-Scout: Agentic Product Carbon Footprint Estimation for Sustainable Retrieval and Recommendation"* (submitted to ECIR 2027, resource track).
 
-Zenodo repository [is available here](https://zenodo.org/records/23861945).
+Our Zenodo repository [is available here](https://zenodo.org/records/23861945).
+Our DagsHub repository [is available here](https://dagshub.com/giuspillo/react_pcf_retrieval).
 
 The resource has two components and a use case:
 
@@ -45,6 +46,7 @@ The resource has two components and a use case:
 ```
 
 Folders marked with (DVC) are not stored in Git: see [Large files](#large-files-dvc-and-zenodo) to download them. 
+They can be downloaded from our [DagsHub repo](https://dagshub.com/giuspillo/react_pcf_retrieval) or [Zenodo repo](https://zenodo.org/records/23861945)
 
 ## Ground truth format
 
@@ -91,7 +93,7 @@ Folders marked with (DVC) are not stored in Git: see [Large files](#large-files-
 
 ## Large files (DVC and Zenodo)
 
-The following folders are versioned with [DVC](https://dvc.org) and stored on [DagsHub](https://dagshub.com/<user>/<repo>), not in Git:
+The following folders are versioned with [DVC](https://dvc.org) and stored on [DagsHub](https://dagshub.com/giuspillo/react_pcf_retrieval), not in Git:
 
 | Folder | Content | Size |
 |---|---|---|
